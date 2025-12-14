@@ -1,4 +1,3 @@
-// components/PDFGenerator.tsx - CLEAN VERSION (Removed Text)
 'use client';
 
 import { useState } from 'react';
@@ -38,11 +37,15 @@ const PDFGenerator = ({ onDownloadStart, onDownloadComplete }: PDFGeneratorProps
       
       let currentY = margin;
 
+      // Store page count manually
+      let totalPages = 1;
+
       // Function to add new page if needed
       const checkNewPage = (spaceNeeded: number) => {
         if (currentY + spaceNeeded > pageHeight - margin) {
           pdf.addPage();
           currentY = margin;
+          totalPages += 1;
           return true;
         }
         return false;
@@ -297,7 +300,7 @@ const PDFGenerator = ({ onDownloadStart, onDownloadComplete }: PDFGeneratorProps
       });
 
       // Footer on all pages
-      const totalPages = pdf.internal.getNumberOfPages();
+      // FIXED: Use manual page count instead of getNumberOfPages()
       for (let i = 1; i <= totalPages; i++) {
         pdf.setPage(i);
         

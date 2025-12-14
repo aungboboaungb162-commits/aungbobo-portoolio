@@ -1,9 +1,6 @@
 // app/layout.tsx
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
 import './globals.css'
-
-const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'Seaman & F&B Trainer Portfolio',
@@ -23,13 +20,15 @@ export default function RootLayout({
           rel="stylesheet" 
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" 
         />
-        {/* Google Fonts */}
+        {/* Google Fonts - fonts.gstatic.com ထည့်ပေးရန် အရေးကြီးပါသည် */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
           href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:wght@400;700&display=swap"
           rel="stylesheet"
         />
       </head>
-      <body className={inter.className}>
+      <body>
         {children}
       </body>
     </html>
