@@ -1,15 +1,45 @@
+/* app/globals.css */
 @import "tailwindcss";
 
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  
+  /* Our custom colors for maritime theme */
+  --color-navy: #0A2463;
+  --color-navy-light: #1a3a8a;
+  --color-navy-dark: #061a42;
+  
+  --color-gold: #D4AF37;
+  --color-gold-light: #e6c15e;
+  --color-gold-dark: #b8941f;
+  
+  --color-sea: #E6F3FF;
+  --color-sea-light: #f0f8ff;
+  --color-sea-dark: #cce6ff;
+  
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+  
+  /* Custom color definitions */
+  --color-navy-900: var(--color-navy);
+  --color-navy-800: var(--color-navy-light);
+  --color-navy-700: var(--color-navy-dark);
+  
+  --color-gold-600: var(--color-gold);
+  --color-gold-500: var(--color-gold-light);
+  --color-gold-700: var(--color-gold-dark);
+  
+  --color-sea-50: var(--color-sea);
+  --color-sea-100: var(--color-sea-light);
+  --color-sea-200: var(--color-sea-dark);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -22,5 +52,5 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }
