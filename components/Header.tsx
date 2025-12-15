@@ -1,4 +1,4 @@
-// components/Header.tsx - FIXED BUILD ERROR
+// components/Header.tsx - FINAL FIXED VERSION
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -7,115 +7,74 @@ import { Menu, X } from 'lucide-react';
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [currentHash, setCurrentHash] = useState('');
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
 
-    // Handle browser back/forward buttons
-    const handlePopState = (event: PopStateEvent) => {
-      // When back button is pressed, handle it
-      const url = new URL(window.location.href);
-      const hash = url.hash;
-      
-      if (hash) {
-        // Scroll to the hash section
-        setTimeout(() => {
-          scrollToHash(hash);
-        }, 50);
-      } else {
-        // Scroll to top if no hash
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
-    };
+    // 🔴 CRITICAL FIX: Handle initial page load
+    // Start with clean history state
+    if (window.history.state === null) {
+      window.history.replaceState({ 
+        page: 'portfolio',
+        preventBack: true 
+      }, '');
+    }
 
-    // Handle hash changes from URL
-    const handleHashChange = () => {
-      const hash = window.location.hash;
-      if (hash) {
-        setCurrentHash(hash);
-        setTimeout(() => {
-          scrollToHash(hash);
-        }, 100);
+    // 🔴 CRITICAL FIX: Block back button from leaving site
+    const handlePopState = (event: PopStateEvent) => {
+      // If user tries to go back to previous website
+      if (!event.state || event.state.page !== 'portfolio') {
+        // Keep them on current page
+        window.history.pushState({ 
+          page: 'portfolio',
+          preventBack: true 
+        }, '');
+        
+        // Optional: Show message
+        console.log('Stay on portfolio site');
       }
     };
 
     window.addEventListener('scroll', handleScroll);
     window.addEventListener('popstate', handlePopState);
-    window.addEventListener('hashchange', handleHashChange);
-
-    // Initial hash check on page load
-    const initialHash = window.location.hash;
-    if (initialHash) {
-      setCurrentHash(initialHash);
-      setTimeout(() => {
-        scrollToHash(initialHash);
-      }, 500);
-    }
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('popstate', handlePopState);
-      window.removeEventListener('hashchange', handleHashChange);
     };
   }, []);
 
-  // Function to scroll to hash
-  const scrollToHash = (hash: string) => {
-    if (!hash) return;
-    
-    const targetElement = document.querySelector(hash);
-    if (targetElement) {
-      const targetPosition = (targetElement as HTMLElement).offsetTop - 80;
-      window.scrollTo({
-        top: targetPosition,
-        behavior: 'smooth'
-      });
-    }
-  };
-
-  // Main function to handle navigation
-  const handleNavigation = (href: string) => {
+  // 🔴 CRITICAL FIX: Simple navigation WITHOUT hash in URL
+  const scrollToSection = (sectionId: string) => {
     setIsMenuOpen(false);
 
-    if (href === '#') {
-      // Scroll to top
+    if (sectionId === 'home') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
-      
-      // Clear hash from URL
-      window.history.replaceState(null, '', window.location.pathname + window.location.search);
-      setCurrentHash('');
       return;
     }
 
-    // Scroll to section
-    const targetElement = document.querySelector(href);
+    const targetElement = document.getElementById(sectionId);
     if (targetElement) {
-      const targetPosition = (targetElement as HTMLElement).offsetTop - 80;
+      const targetPosition = targetElement.offsetTop - 80;
       window.scrollTo({
         top: targetPosition,
         behavior: 'smooth'
       });
-
-      // Update URL hash - IMPORTANT FOR MOBILE BACK BUTTON
-      // Only update if hash is different from current
-      if (currentHash !== href) {
-        // Replace state instead of push to avoid too many history entries
-        window.history.replaceState(null, '', href);
-        setCurrentHash(href);
-      }
+      
+      // 🔴 IMPORTANT: DO NOT update URL hash
+      // This prevents browser history entries
+      // window.location.hash = sectionId; // ❌ DON'T DO THIS
     }
   };
 
   const navItems = [
-    { href: '#', label: 'Home' },
-    { href: '#about', label: 'About' },
-    { href: '#experience', label: 'Experience' },
-    { href: '#training', label: 'Training' },
-    { href: '#gallery', label: 'Gallery' },
-    { href: '#contact', label: 'Contact' }
+    { id: 'home', label: 'Home' },
+    { id: 'experience', label: 'Experience' },
+    { id: 'training', label: 'Training' },
+    { id: 'gallery', label: 'Gallery' },
+    { id: 'contact', label: 'Contact' }
   ];
 
   return (
@@ -127,7 +86,7 @@ const Header = () => {
           {/* Logo */}
           <div className="flex items-center">
             <button 
-              onClick={() => handleNavigation('#')}
+              onClick={() => scrollToSection('home')}
               className="text-xl md:text-2xl font-bold text-navy-900 hover:text-gold-700 transition-colors"
             >
               A2B<span className="text-gold-700">folio</span>
@@ -138,13 +97,9 @@ const Header = () => {
           <nav className="hidden md:flex items-center space-x-1">
             {navItems.map((item) => (
               <button
-                key={item.href}
-                onClick={() => handleNavigation(item.href)}
-                className={`px-4 py-2 text-sm font-medium rounded-lg transition-all duration-300 ${
-                  currentHash === item.href || (item.href === '#' && !currentHash)
-                    ? 'bg-gold-700 text-white'
-                    : 'text-navy-900 hover:bg-gold-50 hover:text-gold-800'
-                }`}
+                key={item.id}
+                onClick={() => scrollToSection(item.id)}
+                className="px-4 py-2 text-sm font-medium text-navy-900 hover:bg-gold-50 hover:text-gold-700 rounded-lg transition-all duration-300"
               >
                 {item.label}
               </button>
@@ -171,13 +126,9 @@ const Header = () => {
             <div className="py-2">
               {navItems.map((item) => (
                 <button
-                  key={item.href}
-                  onClick={() => handleNavigation(item.href)}
-                  className={`w-full text-left px-4 py-3 text-base font-medium transition-colors ${
-                    currentHash === item.href || (item.href === '#' && !currentHash)
-                      ? 'bg-gold-700 text-white'
-                      : 'text-gray-900 hover:bg-gray-50'
-                  }`}
+                  key={item.id}
+                  onClick={() => scrollToSection(item.id)}
+                  className="w-full text-left px-4 py-3 text-base font-medium text-gray-900 hover:bg-gray-50 transition-colors"
                 >
                   {item.label}
                 </button>
