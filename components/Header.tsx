@@ -1,4 +1,4 @@
-// components/Header.tsx - FIXED VERSION WITH PROPER HISTORY MANAGEMENT
+// components/Header.tsx - FIXED BUILD ERROR
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -85,9 +85,7 @@ const Header = () => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
       
       // Clear hash from URL
-      if (window.history.pushState) {
-        window.history.pushState(null, '', window.location.pathname + window.location.search);
-      }
+      window.history.replaceState(null, '', window.location.pathname + window.location.search);
       setCurrentHash('');
       return;
     }
@@ -104,12 +102,8 @@ const Header = () => {
       // Update URL hash - IMPORTANT FOR MOBILE BACK BUTTON
       // Only update if hash is different from current
       if (currentHash !== href) {
-        if (window.history.pushState) {
-          // Replace state instead of push to avoid too many history entries
-          window.history.replaceState(null, '', href);
-        } else {
-          window.location.hash = href;
-        }
+        // Replace state instead of push to avoid too many history entries
+        window.history.replaceState(null, '', href);
         setCurrentHash(href);
       }
     }
