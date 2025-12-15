@@ -1,4 +1,4 @@
-// components/Header.tsx - Fixed version
+// components/Header.tsx - History PushState Fixes Applied
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -37,10 +37,14 @@ const Header = () => {
 
     if (href === '#') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
+      // Hash ကို ရှင်းထုတ်ပါ
+      if (window.history.pushState) {
+        window.history.pushState(null, '', '/'); 
+      }
       return;
     }
 
-    // Smooth scroll logic - FIXED TypeScript error
+    // Smooth scroll logic
     const targetElement = document.querySelector(href);
     if (targetElement) {
       const targetPosition = (targetElement as HTMLElement).offsetTop - 80;
@@ -48,6 +52,15 @@ const Header = () => {
         top: targetPosition,
         behavior: 'smooth'
       });
+
+      // 🚨 FIX: Hash ကို History Stack ထဲ ထည့်သွင်းခြင်း
+      // ၎င်းသည် Back Button ကို နှိပ်လျှင် ယခင် Section သို့ ပြန်သွားစေမည်
+      if (window.history.pushState) {
+        window.history.pushState(null, '', href);
+      } else {
+        // Fallback for older browsers (URL hash change)
+        window.location.hash = href; 
+      }
     }
   };
 
@@ -74,9 +87,10 @@ const Header = () => {
           <div className="flex items-center">
             <button 
               onClick={() => scrollToSection('#')}
-              className="text-xl md:text-2xl font-bold text-navy-900 hover:text-gold-600 transition-colors"
+              className="text-xl md:text-2xl font-bold text-navy-900 hover:text-gold-700 transition-colors"
             >
-              A2B<span className="text-gold-600">folio</span>
+              A2B<span className="text-gold-700">folio</span>
+              {/* 💡 Contrast Fix: text-gold-600 ကို text-gold-700 သို့ ပြင်ဆင်ထားသည် */}
             </button>
           </div>
 
@@ -88,8 +102,8 @@ const Header = () => {
                 onClick={() => scrollToSection(item.href)}
                 className={`px-4 py-2 text-sm font-medium rounded-lg transition-all duration-300 ${
                   pathname === item.href
-                    ? 'bg-gold-600 text-white'
-                    : 'text-navy-900 hover:bg-gold-50 hover:text-gold-700'
+                    ? 'bg-gold-700 text-white' // 💡 Contrast Fix: bg-gold-600 ကို bg-gold-700 သို့ ပြင်ဆင်ထားသည်
+                    : 'text-navy-900 hover:bg-gold-50 hover:text-gold-800' // 💡 Contrast Fix: hover:text-gold-700 ကို text-gold-800 သို့ ပြင်ဆင်ထားသည်
                 }`}
               >
                 {item.label}
@@ -121,7 +135,7 @@ const Header = () => {
                   onClick={() => scrollToSection(item.href)}
                   className={`w-full text-left px-4 py-3 text-base font-medium transition-colors ${
                     pathname === item.href
-                      ? 'bg-gold-600 text-white'
+                      ? 'bg-gold-700 text-white' // 💡 Contrast Fix: bg-gold-600 ကို bg-gold-700 သို့ ပြင်ဆင်ထားသည်
                       : 'text-gray-900 hover:bg-gray-50'
                   }`}
                 >
