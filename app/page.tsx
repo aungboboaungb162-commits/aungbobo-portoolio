@@ -1,6 +1,9 @@
-// app/page.tsx - Mobile Optimized (Final Code with Subtle, Clear Charcoal Overlay)
+// app/page.tsx
 'use client';
 
+// =========================================================
+// 📥 Imports
+// =========================================================
 import Header from '@/components/Header';
 import Experience from '@/components/Experience';
 import Training from '@/components/Training';
@@ -10,7 +13,8 @@ import { Mail, Phone, MapPin } from 'lucide-react';
 import Image from 'next/image';
 
 // =========================================================
-// ♻️ Profile Image Card Component (Refactored)
+// ♻️ Profile Image Card Component (Refactored & Exported)
+// **Home Component ၏ အပြင်ဘက်တွင် သတ်မှတ်ထားပါသည်။**
 // =========================================================
 
 interface ProfileImageCardProps {
@@ -27,7 +31,7 @@ const ProfileImageCard: React.FC<ProfileImageCardProps> = ({ isMobile = false })
       <div className="bg-white/10 backdrop-blur-sm rounded-2xl overflow-hidden shadow-2xl border border-white/20">
         <Image 
           src="/images/aungboboprofile-v2.jpg" 
-          alt="John Smith - Professional F&B Trainer"
+          alt="Aung Bo Bo - Professional F&B Trainer"
           width={800}
           height={1000}
           className="w-full h-auto object-cover"
@@ -47,25 +51,30 @@ const ProfileImageCard: React.FC<ProfileImageCardProps> = ({ isMobile = false })
 }
 
 // =========================================================
-// 🚀 Home Page Component
+// 🚀 Home Page Component (Default Export)
 // =========================================================
 export default function Home() {
+  
+  // 💡 LCP Optimization: Corrected Background Image Path
+  const backgroundImagePath = "/images/backgroundphoto.jpg"; 
+  
   return (
     <div className="min-h-screen bg-white">
       <Header />
       
       <main className="overflow-hidden">
-        {/* Hero Section - Mobile Optimized */}
+        {/* Hero Section */}
         <section className="relative min-h-screen flex items-center">
           {/* Cruise Ship Fine Dining Background */}
           <div className="absolute inset-0">
             <div 
               className="absolute inset-0 bg-cover bg-center"
               style={{
-                backgroundImage: 'url("/images/backgroundphtotoforportofilo.jpg")'
+                // 💥 Fix: Uses the corrected path
+                backgroundImage: `url('${backgroundImagePath}')` 
               }}
             />
-            {/* Color Overlay ကို လုံးဝ ဖယ်ရှားထားသည် */}
+            {/* Color Overlay (bg-gray-900/50 is in the next div) */}
           </div>
 
           <div className="container mx-auto px-4 relative z-10 py-12">
@@ -74,13 +83,14 @@ export default function Home() {
               
               {/* Mobile: Photo First */}
               <div className="lg:hidden w-full mb-12">
-                <ProfileImageCard isMobile={true} />
+                {/* 📌 Fix: ProfileImageCard is now correctly defined outside Home */}
+                <ProfileImageCard isMobile={true} /> 
               </div>
 
-              {/* Professional Content - 💡 Overlay အရောင်ကို Charcoal (မီးခိုးမည်း) သို့ ပြောင်းလဲခြင်း */}
+              {/* Professional Content */}
               <div 
                 className="lg:w-3/5 order-2 lg:order-1 p-6 md:p-10 rounded-2xl 
-                           bg-gray-900/50 shadow-2xl border border-white/20 lg:h-full flex flex-col justify-center" // ⬅️ bg-blue-900/25 မှ bg-gray-900/25 သို့ ပြောင်းလဲလိုက်သည်
+                           bg-gray-900/50 shadow-2xl border border-white/20 lg:h-full flex flex-col justify-center"
               >
                 
                 {/* Professional Identity */}
