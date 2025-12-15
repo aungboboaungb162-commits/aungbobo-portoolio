@@ -76,7 +76,7 @@ const Header = () => {
               onClick={() => scrollToSection('#')}
               className="text-xl md:text-2xl font-bold text-navy-900 hover:text-gold-600 transition-colors"
             >
-              Maritime<span className="text-gold-600">Pro</span>
+              A2B<span className="text-gold-600">folio</span>
             </button>
           </div>
 
