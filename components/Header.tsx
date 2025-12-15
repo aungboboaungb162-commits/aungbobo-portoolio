@@ -1,50 +1,98 @@
-// components/Header.tsx - History PushState Fixes Applied
+// components/Header.tsx - FIXED VERSION WITH PROPER HISTORY MANAGEMENT
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Menu, X, ChevronDown } from 'lucide-react';
-import { usePathname } from 'next/navigation';
+import { Menu, X } from 'lucide-react';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
-  const pathname = usePathname();
+  const [currentHash, setCurrentHash] = useState('');
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
 
-    const handleClickOutside = (event: MouseEvent) => {
-      if (activeDropdown && !(event.target as Element).closest('.dropdown-container')) {
-        setActiveDropdown(null);
+    // Handle browser back/forward buttons
+    const handlePopState = (event: PopStateEvent) => {
+      // When back button is pressed, handle it
+      const url = new URL(window.location.href);
+      const hash = url.hash;
+      
+      if (hash) {
+        // Scroll to the hash section
+        setTimeout(() => {
+          scrollToHash(hash);
+        }, 50);
+      } else {
+        // Scroll to top if no hash
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    };
+
+    // Handle hash changes from URL
+    const handleHashChange = () => {
+      const hash = window.location.hash;
+      if (hash) {
+        setCurrentHash(hash);
+        setTimeout(() => {
+          scrollToHash(hash);
+        }, 100);
       }
     };
 
     window.addEventListener('scroll', handleScroll);
-    document.addEventListener('mousedown', handleClickOutside);
+    window.addEventListener('popstate', handlePopState);
+    window.addEventListener('hashchange', handleHashChange);
+
+    // Initial hash check on page load
+    const initialHash = window.location.hash;
+    if (initialHash) {
+      setCurrentHash(initialHash);
+      setTimeout(() => {
+        scrollToHash(initialHash);
+      }, 500);
+    }
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
-      document.removeEventListener('mousedown', handleClickOutside);
+      window.removeEventListener('popstate', handlePopState);
+      window.removeEventListener('hashchange', handleHashChange);
     };
-  }, [activeDropdown]);
+  }, []);
 
-  const scrollToSection = (href: string) => {
+  // Function to scroll to hash
+  const scrollToHash = (hash: string) => {
+    if (!hash) return;
+    
+    const targetElement = document.querySelector(hash);
+    if (targetElement) {
+      const targetPosition = (targetElement as HTMLElement).offsetTop - 80;
+      window.scrollTo({
+        top: targetPosition,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  // Main function to handle navigation
+  const handleNavigation = (href: string) => {
     setIsMenuOpen(false);
-    setActiveDropdown(null);
 
     if (href === '#') {
+      // Scroll to top
       window.scrollTo({ top: 0, behavior: 'smooth' });
-      // Hash ကို ရှင်းထုတ်ပါ
+      
+      // Clear hash from URL
       if (window.history.pushState) {
-        window.history.pushState(null, '', '/'); 
+        window.history.pushState(null, '', window.location.pathname + window.location.search);
       }
+      setCurrentHash('');
       return;
     }
 
-    // Smooth scroll logic
+    // Scroll to section
     const targetElement = document.querySelector(href);
     if (targetElement) {
       const targetPosition = (targetElement as HTMLElement).offsetTop - 80;
@@ -53,19 +101,18 @@ const Header = () => {
         behavior: 'smooth'
       });
 
-      // 🚨 FIX: Hash ကို History Stack ထဲ ထည့်သွင်းခြင်း
-      // ၎င်းသည် Back Button ကို နှိပ်လျှင် ယခင် Section သို့ ပြန်သွားစေမည်
-      if (window.history.pushState) {
-        window.history.pushState(null, '', href);
-      } else {
-        // Fallback for older browsers (URL hash change)
-        window.location.hash = href; 
+      // Update URL hash - IMPORTANT FOR MOBILE BACK BUTTON
+      // Only update if hash is different from current
+      if (currentHash !== href) {
+        if (window.history.pushState) {
+          // Replace state instead of push to avoid too many history entries
+          window.history.replaceState(null, '', href);
+        } else {
+          window.location.hash = href;
+        }
+        setCurrentHash(href);
       }
     }
-  };
-
-  const toggleDropdown = (dropdown: string) => {
-    setActiveDropdown(activeDropdown === dropdown ? null : dropdown);
   };
 
   const navItems = [
@@ -86,11 +133,10 @@ const Header = () => {
           {/* Logo */}
           <div className="flex items-center">
             <button 
-              onClick={() => scrollToSection('#')}
+              onClick={() => handleNavigation('#')}
               className="text-xl md:text-2xl font-bold text-navy-900 hover:text-gold-700 transition-colors"
             >
               A2B<span className="text-gold-700">folio</span>
-              {/* 💡 Contrast Fix: text-gold-600 ကို text-gold-700 သို့ ပြင်ဆင်ထားသည် */}
             </button>
           </div>
 
@@ -99,11 +145,11 @@ const Header = () => {
             {navItems.map((item) => (
               <button
                 key={item.href}
-                onClick={() => scrollToSection(item.href)}
+                onClick={() => handleNavigation(item.href)}
                 className={`px-4 py-2 text-sm font-medium rounded-lg transition-all duration-300 ${
-                  pathname === item.href
-                    ? 'bg-gold-700 text-white' // 💡 Contrast Fix: bg-gold-600 ကို bg-gold-700 သို့ ပြင်ဆင်ထားသည်
-                    : 'text-navy-900 hover:bg-gold-50 hover:text-gold-800' // 💡 Contrast Fix: hover:text-gold-700 ကို text-gold-800 သို့ ပြင်ဆင်ထားသည်
+                  currentHash === item.href || (item.href === '#' && !currentHash)
+                    ? 'bg-gold-700 text-white'
+                    : 'text-navy-900 hover:bg-gold-50 hover:text-gold-800'
                 }`}
               >
                 {item.label}
@@ -132,10 +178,10 @@ const Header = () => {
               {navItems.map((item) => (
                 <button
                   key={item.href}
-                  onClick={() => scrollToSection(item.href)}
+                  onClick={() => handleNavigation(item.href)}
                   className={`w-full text-left px-4 py-3 text-base font-medium transition-colors ${
-                    pathname === item.href
-                      ? 'bg-gold-700 text-white' // 💡 Contrast Fix: bg-gold-600 ကို bg-gold-700 သို့ ပြင်ဆင်ထားသည်
+                    currentHash === item.href || (item.href === '#' && !currentHash)
+                      ? 'bg-gold-700 text-white'
                       : 'text-gray-900 hover:bg-gray-50'
                   }`}
                 >
