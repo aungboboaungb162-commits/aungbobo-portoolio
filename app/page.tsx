@@ -97,22 +97,25 @@ export default function Home() {
                 <div className="mb-10">
                   <div className="mb-6">
                     <div className="text-sm font-semibold text-gold-300 uppercase tracking-wider mb-2">
-                      Cruise Ship Hospitality Expert
+                    Cruise & River Ship Hospitality Expert
                     </div>
                     <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
                       AUNG BO BO
                     </h1>
                     <div className="text-xl lg:text-2xl text-gold-300 font-medium">
-                      F&B Training Specialist
+                    F&B Professional | Hospitality Trainer
                     </div>
                   </div>
                   
                   {/* Core Value Proposition */}
                   <div className="max-w-2xl mb-12">
                     <p className="text-lg lg:text-xl text-white/90 leading-relaxed">
-                      Transforming luxury cruise ship dining experiences through 
-                      comprehensive F&B staff training that enhances service quality, 
-                      increases guest satisfaction, and drives operational excellence.
+                    Where Luxury Cruise Dining Meets Professional Training
+
+                    Expert-led Food & Beverage and hotel operations training,
+                    with deep knowledge across all hospitality departments,
+                    creating world-class service standards for
+                    luxury ocean and river cruise lines.
                     </p>
                   </div>
                 </div>
@@ -123,17 +126,17 @@ export default function Home() {
                     <div className="border-l-4 border-gold-500 pl-3 md:pl-4">
                       <div className="text-2xl md:text-3xl font-bold text-white">8+</div>
                       <div className="text-white/80 text-sm md:text-base">Years Experience</div>
-                      <div className="text-xs md:text-sm text-gold-300/80 mt-1">Luxury Cruise Lines</div>
+                      <div className="text-xs md:text-sm text-gold-300/80 mt-1">Ocean & River Cruises</div>
                     </div>
                     <div className="border-l-4 border-gold-500 pl-3 md:pl-4">
                       <div className="text-2xl md:text-3xl font-bold text-white">50+</div>
-                      <div className="text-white/80 text-sm md:text-base">Teams Trained</div>
-                      <div className="text-xs md:text-sm text-gold-300/80 mt-1">International Staff</div>
+                      <div className="text-white/80 text-sm md:text-base">Service Teams Trained</div>
+                      <div className="text-xs md:text-sm text-gold-300/80 mt-1">International Crew</div>
                     </div>
                     <div className="border-l-4 border-gold-500 pl-3 md:pl-4">
                       <div className="text-2xl md:text-3xl font-bold text-white">5★</div>
-                      <div className="text-white/80 text-sm md:text-base">Service Rating</div>
-                      <div className="text-xs md:text-sm text-gold-300/80 mt-1">Consistent Excellence</div>
+                      <div className="text-white/80 text-sm md:text-base">Service Standards</div>
+                      <div className="text-xs md:text-sm text-gold-300/80 mt-1">Luxury Guest Experience</div>
                     </div>
                   </div>
                 </div>
@@ -150,7 +153,7 @@ export default function Home() {
                     href="#contact" 
                     className="bg-transparent hover:bg-white/10 border-2 border-white text-white px-8 py-4 rounded-lg font-semibold text-lg transition duration-300 text-center"
                   >
-                    Contact for Consultation
+                    Request Training or Consultation
                   </a>
                 </div>
               </div>
@@ -191,9 +194,9 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-3 gap-8">
             <div>
-              <h4 className="text-xl font-bold mb-4">Maritime Professional</h4>
+              <h4 className="text-xl font-bold mb-4">Cruise & River Ship Hospitality Professional</h4>
               <p className="text-blue-300">
-                Specializing in cruise ship fine dining operations and F&B staff training with 8+ years of international experience.
+                Specializing in cruise ship fine dining operations and F&B crew training with 8+ years of international experience.
               </p>
             </div>
             
@@ -212,15 +215,15 @@ export default function Home() {
               <ul className="space-y-3">
                 <li className="flex items-center">
                   <Mail className="w-4 h-4 mr-3 text-gold-300" />
-                  <span>john.smith@maritimeprofessional.com</span>
+                  <span>aungbobo.aungb162@gmail.com</span>
                 </li>
                 <li className="flex items-center">
                   <Phone className="w-4 h-4 mr-3 text-gold-300" />
-                  <span>+1 (555) 123-4567</span>
+                  <span>+959-254-586-830</span>
                 </li>
                 <li className="flex items-center">
                   <MapPin className="w-4 h-4 mr-3 text-gold-300" />
-                  <span>Miami, Florida, USA</span>
+                  <span>Insein, Yangon, Myanmar</span>
                 </li>
               </ul>
             </div>
@@ -228,7 +231,7 @@ export default function Home() {
           
           <div className="mt-10 pt-8 border-t border-white/10 text-center">
             <p className="text-white/60">
-              © {new Date().getFullYear()} Seaman & F&B Trainer Professional Portfolio. All rights reserved.
+              © {new Date().getFullYear()} Aung Bo Bo | Cruise & River Ship Hospitality Professional. All rights reserved.
             </p>
             <p className="text-white/40 text-sm mt-2">
               Designed for professional presentation and career advancement

@@ -1,9 +1,8 @@
-// components/Contact.tsx - WITH PDF GENERATOR COMPONENT
+// components/Contact.tsx - WITHOUT PDF GENERATOR
 'use client';
 
 import { useState } from 'react';
 import { Mail, Phone, MapPin, Send, CheckCircle, Linkedin, FileText, Clock, Calendar } from 'lucide-react';
-import PDFGenerator from './PDFGenerator';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -14,7 +13,6 @@ const Contact = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [showPDFInfo, setShowPDFInfo] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({
@@ -61,23 +59,13 @@ const Contact = () => {
     }
   };
 
-  const handleDownloadStart = () => {
-    setShowPDFInfo(true);
-  };
-
-  const handleDownloadComplete = () => {
-    setTimeout(() => {
-      setShowPDFInfo(false);
-    }, 5000);
-  };
-
   const contactInfo = [
     {
       icon: <Mail className="w-6 h-6" />,
       title: "Email Address",
       value: "aungbobo.aungb162@gmail.com",
       description: "Primary contact for professional inquiries",
-      action: "mailto:john.smith@maritimeprofessional.com?subject=Professional%20Inquiry"
+      action: "mailto:aungbobo.aungb162@gmail.com?subject=Professional%20Inquiry"
     },
     {
       icon: <Phone className="w-6 h-6" />,
@@ -89,9 +77,9 @@ const Contact = () => {
     {
       icon: <MapPin className="w-6 h-6" />,
       title: "Base Location",
-      value: "Miami, Florida, USA",
-      description: "Primary cruise departure hub",
-      action: "https://maps.google.com/?q=Miami+Florida+USA"
+      value: "Insein, Yangon, Myanmar", 
+      description: "a2bfolio.com",
+      action: "https://www.google.com/maps/place/V4P2%2B32Q,+Yangon/@16.8852176,96.0975345,983m/data=!3m2!1e3!4b1!4m5!3m4!1s0x30c1949e223e196b:0xc1e504b9154230c2!8m2!3d16.8852125!4d96.1001094?entry=ttu&g_ep=EgoyMDI1MTIwOS4wIKXMDSoASAFQAw%3D%3D"
     },
     {
       icon: <Linkedin className="w-6 h-6" />,
@@ -362,24 +350,9 @@ const Contact = () => {
               </div>
             </div>
 
-            {/* PDF GENERATOR COMPONENT */}
-            <PDFGenerator 
-              onDownloadStart={handleDownloadStart}
-              onDownloadComplete={handleDownloadComplete}
-            />
-
-            {/* PDF Generation Info */}
-            {showPDFInfo && (
-              <div className="mt-4 p-4 bg-green-50 rounded-lg border border-green-200 animate-pulse">
-                <p className="text-green-800 text-sm text-center">
-                  ⚡ PDF is being generated from website content...
-                </p>
-              </div>
-            )}
-
             {/* Schedule Consultation Button */}
             <a
-              href="mailto:john.smith@maritimeprofessional.com?subject=Schedule%20Consultation&body=Hi%20John,%20I'd%20like%20to%20schedule%20a%20consultation.%20Please%20suggest%20some%20available%20times."
+              href="mailto:aungbobo.aungb162@gmail.com?subject=Schedule%20Consultation&body=Hi%20John,%20I'd%20like%20to%20schedule%20a%20consultation.%20Please%20suggest%20some%20available%20times."
               className="w-full mt-4 block bg-navy-900 hover:bg-navy-800 text-white font-medium py-3 md:py-4 px-6 rounded-xl transition duration-300 text-center flex items-center justify-center"
             >
               <Calendar className="w-4 h-4 md:w-5 md:h-5 mr-3" />

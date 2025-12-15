@@ -1,8 +1,10 @@
 // components/TrainingDetailModal.tsx - FIXED VERSION
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { X, Download, Mail, CheckCircle, User, Building, MessageSquare, Send } from 'lucide-react';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 interface TrainingDetailModalProps {
   isOpen: boolean;
@@ -31,6 +33,8 @@ const TrainingDetailModal = ({ isOpen, onClose, program }: TrainingDetailModalPr
     message: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  const pdfRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -46,76 +50,185 @@ const TrainingDetailModal = ({ isOpen, onClose, program }: TrainingDetailModalPr
     };
   }, [isOpen]);
 
-  // Real PDF Download Function
-  const handleDownload = () => {
-    if (!program) return;
+  // Real PDF Generation and Download Function
+  const handleDownload = async () => {
+    if (!program || !pdfRef.current) return;
     
     setIsDownloading(true);
     
-    // Create PDF content
-    const pdfContent = `
-      ==============================================
-      TRAINING PROGRAM SYLLABUS
-      ==============================================
+    try {
+      // Create a hidden container for PDF generation
+      const pdfContainer = document.createElement('div');
+      pdfContainer.style.position = 'absolute';
+      pdfContainer.style.left = '-9999px';
+      pdfContainer.style.width = '800px';
+      pdfContainer.style.backgroundColor = 'white';
+      pdfContainer.style.padding = '40px';
       
-      Program Title: ${program.title}
-      Category: ${program.category}
-      Level: ${program.level}
-      Duration: ${program.duration}
+      // Build PDF content
+      pdfContainer.innerHTML = `
+        <div style="font-family: Arial, sans-serif; color: #000000;">
+          <!-- Header -->
+          <div style="border-bottom: 3px solid #D4AF37; padding-bottom: 20px; margin-bottom: 30px;">
+            <div style="display: flex; align-items: center; margin-bottom: 15px;">
+              <div style="font-size: 48px; margin-right: 15px;">${program.icon}</div>
+              <div>
+                <h1 style="color: #1e3a8a; font-size: 32px; margin: 0; font-weight: bold;">${program.title}</h1>
+                <div style="display: flex; gap: 15px; margin-top: 10px;">
+                  <span style="background: #f0f9ff; color: #1e3a8a; padding: 5px 15px; border-radius: 20px; font-weight: bold;">
+                    ${program.category}
+                  </span>
+                  <span style="color: #000000;">
+                    Level: <strong>${program.level}</strong>
+                  </span>
+                  <span style="color: #000000;">
+                    Duration: <strong style="color: #D4AF37;">${program.duration}</strong>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Program Overview -->
+          <div style="margin-bottom: 30px;">
+            <h2 style="color: #1e3a8a; font-size: 24px; border-left: 4px solid #10b981; padding-left: 15px;">
+              Program Overview
+            </h2>
+            <p style="color: #000000; line-height: 1.6; margin-top: 10px;">
+              ${program.description}
+            </p>
+          </div>
+          
+          <!-- Two Column Layout -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+            <!-- Training Modules -->
+            <div>
+              <h2 style="color: #1e3a8a; font-size: 24px; margin-bottom: 20px; display: flex; align-items: center;">
+                <div style="width: 30px; height: 30px; background: #fef3c7; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 10px;">
+                  <span style="color: #D4AF37; font-weight: bold;">1</span>
+                </div>
+                Training Modules
+              </h2>
+              <div style="background: #f8fafc; padding: 20px; border-radius: 10px; border: 1px solid #e2e8f0;">
+                ${program.modules.map((module, index) => `
+                  <div style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #e2e8f0; ${index === program.modules.length - 1 ? 'margin-bottom: 0; padding-bottom: 0; border-bottom: none;' : ''}">
+                    <div style="display: flex; align-items: start;">
+                      <div style="width: 24px; height: 24px; background: #fef3c7; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 10px; flex-shrink: 0;">
+                        <span style="color: #D4AF37; font-size: 12px; font-weight: bold;">${index + 1}</span>
+                      </div>
+                      <div>
+                        <h3 style="color: #000000; font-size: 16px; font-weight: bold; margin: 0;">${module}</h3>
+                        <p style="color: #4b5563; font-size: 14px; margin-top: 5px;">
+                          Hands-on training with practical exercises and assessments
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+            
+            <!-- Learning Outcomes & Details -->
+            <div>
+              <!-- Learning Outcomes -->
+              <div style="background: linear-gradient(135deg, #eff6ff, #dbeafe); padding: 20px; border-radius: 10px; border: 1px solid #bfdbfe; margin-bottom: 20px;">
+                <h2 style="color: #1e3a8a; font-size: 24px; margin-bottom: 15px; display: flex; align-items: center;">
+                  <div style="width: 30px; height: 30px; background: #dbeafe; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 10px;">
+                    <span style="color: #1e3a8a; font-weight: bold;">✓</span>
+                  </div>
+                  Learning Outcomes
+                </h2>
+                <ul style="color: #000000; padding-left: 20px; margin: 0;">
+                  <li style="margin-bottom: 10px;">
+                    <strong>Master ${program.category.toLowerCase()} skills</strong>
+                  </li>
+                  <li style="margin-bottom: 10px;">
+                    <strong>Apply knowledge in cruise ship environment</strong>
+                  </li>
+                  <li>
+                    <strong>Receive certification upon completion</strong>
+                  </li>
+                </ul>
+              </div>
+              
+              <!-- Target Audience -->
+              <div style="background: linear-gradient(135deg, #fffbeb, #fef3c7); padding: 20px; border-radius: 10px; border: 1px solid #fde68a; margin-bottom: 20px;">
+                <h2 style="color: #1e3a8a; font-size: 24px; margin-bottom: 15px; display: flex; align-items: center;">
+                  <div style="width: 30px; height: 30px; background: #fef3c7; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 10px;">
+                    <span style="color: #D4AF37; font-weight: bold;">👥</span>
+                  </div>
+                  Target Audience
+                </h2>
+                <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                  <span style="background: white; color: #1e40af; padding: 8px 16px; border-radius: 8px; border: 1px solid #93c5fd; font-weight: bold;">
+                    F&B Staff
+                  </span>
+                  <span style="background: white; color: #047857; padding: 8px 16px; border-radius: 8px; border: 1px solid #6ee7b7; font-weight: bold;">
+                    Supervisors
+                  </span>
+                  <span style="background: white; color: #7c3aed; padding: 8px 16px; border-radius: 8px; border: 1px solid #c4b5fd; font-weight: bold;">
+                    Managers
+                  </span>
+                  <span style="background: white; color: #d97706; padding: 8px 16px; border-radius: 8px; border: 1px solid #fcd34d; font-weight: bold;">
+                    Trainers
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Footer -->
+          <div style="margin-top: 40px; padding-top: 20px; border-top: 2px solid #e5e7eb; text-align: center; color: #000000;">
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 20px;">
+              <div>
+                <div style="font-size: 24px; color: #D4AF37; font-weight: bold;">100%</div>
+                <div style="font-weight: bold;">Practical Focus</div>
+              </div>
+              <div>
+                <div style="font-size: 24px; color: #D4AF37; font-weight: bold;">24/7</div>
+                <div style="font-weight: bold;">Support Available</div>
+              </div>
+              <div>
+                <div style="font-size: 24px; color: #D4AF37; font-weight: bold;">✓</div>
+                <div style="font-weight: bold;">Certificate Included</div>
+              </div>
+            </div>
+            <div style="color: #6b7280; font-size: 14px;">
+              Generated on ${new Date().toLocaleDateString()} • Maritime Professional Training
+            </div>
+          </div>
+        </div>
+      `;
       
-      --------------------------------------------------
-      PROGRAM OVERVIEW
-      --------------------------------------------------
-      ${program.description}
+      document.body.appendChild(pdfContainer);
       
-      --------------------------------------------------
-      TRAINING MODULES
-      --------------------------------------------------
-      ${program.modules.map((module, index) => `${index + 1}. ${module}`).join('\n')}
+      // Generate PDF using html2canvas and jsPDF
+      const canvas = await html2canvas(pdfContainer, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: '#ffffff'
+      });
       
-      --------------------------------------------------
-      LEARNING OUTCOMES
-      --------------------------------------------------
-      1. Master ${program.category.toLowerCase()} skills
-      2. Apply knowledge in cruise ship environment
-      3. Receive certification upon completion
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const imgWidth = 190;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
       
-      --------------------------------------------------
-      TARGET AUDIENCE
-      --------------------------------------------------
-      • F&B Staff
-      • Supervisors
-      • Managers
-      • Trainers
+      pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
+      pdf.save(`${program.title.replace(/\s+/g, '_')}_Syllabus.pdf`);
       
-      --------------------------------------------------
-      CONTACT INFORMATION
-      --------------------------------------------------
-      Trainer: John Smith
-      Position: Senior F&B Trainer
-      Email: john.smith@maritimeprofessional.com
-      Phone: +1 (555) 123-4567
+      // Clean up
+      document.body.removeChild(pdfContainer);
       
-      ==============================================
-      Generated: ${new Date().toLocaleDateString()}
-      ==============================================
-    `;
-    
-    // Create and download PDF file
-    const blob = new Blob([pdfContent], { type: 'application/pdf' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${program.title.replace(/\s+/g, '_')}_Syllabus.pdf`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    window.URL.revokeObjectURL(url);
-    
-    setTimeout(() => {
-      setIsDownloading(false);
       alert(`✅ Syllabus for "${program.title}" has been downloaded successfully!`);
-    }, 500);
+      
+    } catch (error) {
+      console.error('PDF generation failed:', error);
+      alert('Failed to generate PDF. Please try again.');
+    } finally {
+      setIsDownloading(false);
+    }
   };
 
   // Handle form input changes
@@ -328,7 +441,7 @@ const TrainingDetailModal = ({ isOpen, onClose, program }: TrainingDetailModalPr
           {/* Training Request Form (Conditional) */}
           {showRequestForm ? (
             <div className="mt-8 p-6 bg-gradient-to-br from-gold-50 to-amber-50 rounded-xl border border-amber-200">
-              <h3 className="text-xl font-bold text-navy-900 mb-6 flex items-center">
+              <h3 className="text-xl font-bold text-black mb-6 flex items-center">
                 <Mail className="w-6 h-6 text-gold-600 mr-3" />
                 Request Custom Training
               </h3>
@@ -336,8 +449,8 @@ const TrainingDetailModal = ({ isOpen, onClose, program }: TrainingDetailModalPr
               <form onSubmit={handleSubmitRequest} className="space-y-4">
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
-                    <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
-                      <User className="w-4 h-4 mr-2" />
+                    <label className="flex items-center text-sm font-medium text-black mb-2">
+                      <User className="w-4 h-4 mr-2 text-gray-700" />
                       Your Name *
                     </label>
                     <input
@@ -346,14 +459,14 @@ const TrainingDetailModal = ({ isOpen, onClose, program }: TrainingDetailModalPr
                       value={formData.name}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold-500 focus:border-transparent outline-none"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold-500 focus:border-transparent outline-none text-black placeholder-gray-500"
                       placeholder="Enter your full name"
                     />
                   </div>
                   
                   <div>
-                    <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
-                      <Mail className="w-4 h-4 mr-2" />
+                    <label className="flex items-center text-sm font-medium text-black mb-2">
+                      <Mail className="w-4 h-4 mr-2 text-gray-700" />
                       Email Address *
                     </label>
                     <input
@@ -362,15 +475,15 @@ const TrainingDetailModal = ({ isOpen, onClose, program }: TrainingDetailModalPr
                       value={formData.email}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold-500 focus:border-transparent outline-none"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold-500 focus:border-transparent outline-none text-black placeholder-gray-500"
                       placeholder="your.email@example.com"
                     />
                   </div>
                 </div>
                 
                 <div>
-                  <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
-                    <Building className="w-4 h-4 mr-2" />
+                  <label className="flex items-center text-sm font-medium text-black mb-2">
+                    <Building className="w-4 h-4 mr-2 text-gray-700" />
                     Company / Cruise Line
                   </label>
                   <input
@@ -378,14 +491,14 @@ const TrainingDetailModal = ({ isOpen, onClose, program }: TrainingDetailModalPr
                     name="company"
                     value={formData.company}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold-500 focus:border-transparent outline-none"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold-500 focus:border-transparent outline-none text-black placeholder-gray-500"
                     placeholder="Optional"
                   />
                 </div>
                 
                 <div>
-                  <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
-                    <MessageSquare className="w-4 h-4 mr-2" />
+                  <label className="flex items-center text-sm font-medium text-black mb-2">
+                    <MessageSquare className="w-4 h-4 mr-2 text-gray-700" />
                     Additional Information
                   </label>
                   <textarea
@@ -393,7 +506,7 @@ const TrainingDetailModal = ({ isOpen, onClose, program }: TrainingDetailModalPr
                     value={formData.message}
                     onChange={handleInputChange}
                     rows={3}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold-500 focus:border-transparent outline-none"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold-500 focus:border-transparent outline-none text-black placeholder-gray-500"
                     placeholder="Tell us about your training needs, preferred dates, or any questions..."
                   />
                 </div>
@@ -494,6 +607,9 @@ const TrainingDetailModal = ({ isOpen, onClose, program }: TrainingDetailModalPr
           </div>
         </div>
       </div>
+
+      {/* Hidden PDF generation content (not rendered in modal) */}
+      <div ref={pdfRef} style={{ display: 'none' }} />
     </div>
   );
 };
