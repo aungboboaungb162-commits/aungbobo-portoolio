@@ -50,8 +50,8 @@ export const metadata: Metadata = {
   
   // 🔴 FIX: ICON CONFIGURATION - a2bfolio.jpeg ကို Favicon အဖြစ် သတ်မှတ်
   icons: {
-    icon: '/a2bfolio.jpeg', // Browser Tab Icon
-    apple: '/a2bfolio.jpeg', // iOS Home Screen Icon
+    icon: '/a2bfolio.png', // Browser Tab Icon
+    apple: '/a2bfolio.png', // iOS Home Screen Icon
   },
   
   // 5. Open Graph / Social Media Sharing အတွက်
