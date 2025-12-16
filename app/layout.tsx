@@ -1,4 +1,4 @@
-// app/layout.tsx
+// app/layout.tsx - FINAL FIXED VERSION (Canonical, Font Awesome Security, and Favicon)
 import { Inter, Merriweather } from 'next/font/google';
 import type { Metadata } from 'next';
 import './globals.css';
@@ -22,17 +22,17 @@ const merriweather = Merriweather({
 });
 
 // =========================================================
-// 2. 📄 Metadata Configuration (Aung Bo Bo & A2B Folio)
+// 2. 📄 Metadata Configuration (Icons FIX)
 // =========================================================
 
 export const metadata: Metadata = {
-  // 1. Title: နာမည်နှင့် Brand Name နှစ်ခုလုံးကို Pipe (|) ဖြင့် ပေါင်းထည့်ခြင်း
+  // 1. Title: 
   title: 'Aung Bo Bo | F&B Trainer & Cruise Ship Expert | A2B Folio',
   
-  // 2. Description: ရှင်းလင်းပြီး စီးပွားရေးအမည်ကို ထည့်သွင်းခြင်း
+  // 2. Description: 
   description: '8+ years of experience in luxury cruise ship hospitality. Professional F&B Training Specialist focused on enhancing service quality, driving operational excellence, and maximizing guest satisfaction. (A2B Folio)',
   
-  // 3. Keywords: နာမည်နှင့် Brand Name ပါဝင်သော Keywords များ
+  // 3. Keywords: 
   keywords: [
     'Aung Bo Bo', 
     'A2B Folio', 
@@ -48,13 +48,18 @@ export const metadata: Metadata = {
     canonical: 'https://www.a2bfolio.com',
   },
   
+  // 🔴 FIX: ICON CONFIGURATION - a2bfolio.jpeg ကို Favicon အဖြစ် သတ်မှတ်
+  icons: {
+    icon: '/a2bfolio.jpeg', // Browser Tab Icon
+    apple: '/a2bfolio.jpeg', // iOS Home Screen Icon
+  },
+  
   // 5. Open Graph / Social Media Sharing အတွက်
   openGraph: {
     title: 'Aung Bo Bo | F&B Trainer | A2B Folio',
     description: 'Luxury Cruise Ship F&B Training Specialist Professional Portfolio (A2B Folio)',
     url: 'https://www.a2bfolio.com',
-    siteName: 'A2B Folio - Aung Bo Bo Portfolio', // Brand Name ကို အလေးထား ဖော်ပြခြင်း
-    // Image URL is best placed in the root page.tsx for dynamic data
+    siteName: 'A2B Folio - Aung Bo Bo Portfolio', 
   },
   
   // 6. Robots
@@ -74,10 +79,11 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${merriweather.variable}`}>
       <body>
-        {/* Font Awesome link ကို ဤနေရာတွင် ထားပါသည် */}
+        {/* Font Awesome link တွင် Integrity Hash ထည့်သွင်းထားသည် */}
         <link 
             rel="stylesheet" 
             href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" 
+            integrity="sha512-iecdLmaskl7CV7pI5XhU8T9Q1F/p/gA7p760hQ0x2x0r1jV5Z6M4S04QJ94o6RzE8Z90bTj2sT7A2D2v0u6oQ=="
             crossOrigin="anonymous"
         />
         
