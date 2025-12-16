@@ -1,4 +1,4 @@
-// components/Header.tsx - FINAL FIXED VERSION
+// components/Header.tsx - SIMPLE WORKING VERSION
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -12,60 +12,24 @@ const Header = () => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
-
-    // 🔴 CRITICAL FIX: Handle initial page load
-    // Start with clean history state
-    if (window.history.state === null) {
-      window.history.replaceState({ 
-        page: 'portfolio',
-        preventBack: true 
-      }, '');
-    }
-
-    // 🔴 CRITICAL FIX: Block back button from leaving site
-    const handlePopState = (event: PopStateEvent) => {
-      // If user tries to go back to previous website
-      if (!event.state || event.state.page !== 'portfolio') {
-        // Keep them on current page
-        window.history.pushState({ 
-          page: 'portfolio',
-          preventBack: true 
-        }, '');
-        
-        // Optional: Show message
-        console.log('Stay on portfolio site');
-      }
-    };
-
     window.addEventListener('scroll', handleScroll);
-    window.addEventListener('popstate', handlePopState);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('popstate', handlePopState);
-    };
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // 🔴 CRITICAL FIX: Simple navigation WITHOUT hash in URL
+  // Simple scroll without hash
   const scrollToSection = (sectionId: string) => {
     setIsMenuOpen(false);
-
+    
     if (sectionId === 'home') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
-
-    const targetElement = document.getElementById(sectionId);
-    if (targetElement) {
-      const targetPosition = targetElement.offsetTop - 80;
-      window.scrollTo({
-        top: targetPosition,
-        behavior: 'smooth'
-      });
-      
-      // 🔴 IMPORTANT: DO NOT update URL hash
-      // This prevents browser history entries
-      // window.location.hash = sectionId; // ❌ DON'T DO THIS
+    
+    const element = document.getElementById(sectionId);
+    if (element) {
+      const yOffset = -80;
+      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({ top: y, behavior: 'smooth' });
     }
   };
 
@@ -83,7 +47,6 @@ const Header = () => {
     }`}>
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between">
-          {/* Logo */}
           <div className="flex items-center">
             <button 
               onClick={() => scrollToSection('home')}
@@ -93,7 +56,6 @@ const Header = () => {
             </button>
           </div>
 
-          {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-1">
             {navItems.map((item) => (
               <button
@@ -106,29 +68,22 @@ const Header = () => {
             ))}
           </nav>
 
-          {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className="md:hidden p-2 rounded-lg bg-white shadow-sm hover:bg-gray-50 transition-colors"
-            aria-label="Toggle menu"
           >
-            {isMenuOpen ? (
-              <X className="w-6 h-6 text-gray-700" />
-            ) : (
-              <Menu className="w-6 h-6 text-gray-700" />
-            )}
+            {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
 
-        {/* Mobile Menu */}
         {isMenuOpen && (
-          <div className="md:hidden mt-4 bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden">
+          <div className="md:hidden mt-4 bg-white rounded-xl shadow-xl border border-gray-200">
             <div className="py-2">
               {navItems.map((item) => (
                 <button
                   key={item.id}
                   onClick={() => scrollToSection(item.id)}
-                  className="w-full text-left px-4 py-3 text-base font-medium text-gray-900 hover:bg-gray-50 transition-colors"
+                  className="w-full text-left px-4 py-3 text-base font-medium text-gray-900 hover:bg-gray-50"
                 >
                   {item.label}
                 </button>
