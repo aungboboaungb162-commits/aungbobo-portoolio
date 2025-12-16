@@ -1,4 +1,4 @@
-// components/Header.tsx - SIMPLE WORKING VERSION
+// components/Header.tsx - UPDATED VERSION (fixed hamburger menu)
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -68,23 +68,31 @@ const Header = () => {
             ))}
           </nav>
 
+          {/* 🎨 Hamburger Menu Button - Fixed and Improved */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden p-2 rounded-lg bg-white shadow-sm hover:bg-gray-50 transition-colors"
+            className="md:hidden p-2 rounded-lg bg-gold-600 hover:bg-gold-700 transition-colors shadow-md"
+            aria-label="Toggle menu"
           >
-            {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            {isMenuOpen ? (
+              <X className="w-6 h-6 text-white" />
+            ) : (
+              <Menu className="w-6 h-6 text-white" />
+            )}
           </button>
         </div>
 
+        {/* 📱 Mobile Menu Dropdown */}
         {isMenuOpen && (
-          <div className="md:hidden mt-4 bg-white rounded-xl shadow-xl border border-gray-200">
+          <div className="md:hidden mt-4 bg-white rounded-xl shadow-xl border border-gray-200 animate-fadeIn">
             <div className="py-2">
               {navItems.map((item) => (
                 <button
                   key={item.id}
                   onClick={() => scrollToSection(item.id)}
-                  className="w-full text-left px-4 py-3 text-base font-medium text-gray-900 hover:bg-gray-50"
+                  className="w-full text-left px-4 py-3 text-base font-medium text-gray-900 hover:bg-gold-50 hover:text-gold-700 transition-colors flex items-center"
                 >
+                  <span className="mr-2">•</span>
                   {item.label}
                 </button>
               ))}
